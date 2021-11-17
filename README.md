@@ -25,18 +25,49 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 
 ![Imágen 1](images/part1/part1-vm-basic-config.png)
 
+   * Nos dirigimos a creacón de mauina virtual y realizamos la creación con los parametros indicados
+   
+   ![](images/part1/1.PNG)
+   
+   ![](images/part1/2.PNG)
+   
+   ![](images/part1/3.PNG)
+   
+   ![](images/part1/4.PNG)
+   
+   ![](images/part1/5.PNG)
+
 2. Para conectarse a la VM use el siguiente comando, donde las `x` las debe remplazar por la IP de su propia VM.
 
     `ssh scalability_lab@xxx.xxx.xxx.xxx`
+    
+    * En nuestra consola de la VM nos dirigimos a la opción conectarnos, en esta pestaña nos indica como realizar la conexión
+    
+    ![](images/part1/7.PNG)
+    
+    * Nos dirigimos al archivo en donde descargamos el las llaves pem y abrimos una terminal
+    
+    ![](images/part1/6.PNG)
+    
+    * En la terminal escribimos el comando que nos dan en azure reemplazando <ruta de acceso de clave privada> por el nombre de nuestra clave pem
+   
+    ![](images/part1/8.PNG)
+
 
 3. Instale node, para ello siga la sección *Installing Node.js and npm using NVM* que encontrará en este [enlace](https://linuxize.com/post/how-to-install-node-js-on-ubuntu-18.04/).
+   
 4. Para instalar la aplicación adjunta al Laboratorio, suba la carpeta `FibonacciApp` a un repositorio al cual tenga acceso y ejecute estos comandos dentro de la VM:
 
     `git clone <your_repo>`
+   
+    ![](images/part1/9.PNG)
 
     `cd <your_repo>/FibonacciApp`
 
     `npm install`
+   
+    ![](images/part1/10.PNG)
+   
 
 5. Para ejecutar la aplicación puede usar el comando `npm FibinacciApp.js`, sin embargo una vez pierda la conexión ssh la aplicación dejará de funcionar. Para evitar ese compartamiento usaremos *forever*. Ejecute los siguientes comando dentro de la VM.
 
@@ -47,34 +78,114 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 6. Antes de verificar si el endpoint funciona, en Azure vaya a la sección de *Networking* y cree una *Inbound port rule* tal como se muestra en la imágen. Para verificar que la aplicación funciona, use un browser y user el endpoint `http://xxx.xxx.xxx.xxx:3000/fibonacci/6`. La respuesta debe ser `The answer is 8`.
 
 ![](images/part1/part1-vm-3000InboudRule.png)
+   
+   ![](images/part1/11.PNG)
+   
+   Inciamos node
+   
+   ![](images/part1/12.PNG)
+   
+   Consultamos la ruta http://20.65.60.20:3000/fibonacci/8
+   
+   ![](images/part1/13.PNG)
+   
+   Y podemos observar que lo recibio 
+   
+   ![](images/part1/14.PNG)
 
 7. La función que calcula en enésimo número de la secuencia de Fibonacci está muy mal construido y consume bastante CPU para obtener la respuesta. Usando la consola del Browser documente los tiempos de respuesta para dicho endpoint usando los siguintes valores:
+   
     * 1000000
+      
+      Tarda 21.70s
+   
+      ![](images/part1/15.PNG)
+   
     * 1010000
+   
+      Tarda 22.16s
+   
+      ![](images/part1/16.PNG)
+   
     * 1020000
+  
+      Tarda 22.24s
+   
+      ![](images/part1/17.PNG)
+      
     * 1030000
+   
+      Tarda 23.57s
+   
+      ![](images/part1/18.PNG)
+   
     * 1040000
+   
+      Tarda 24.20s
+   
+      ![](images/part1/19.PNG)
+   
     * 1050000
+   
+      Tarda 24.91s
+   
+      ![](images/part1/20.PNG)
+   
     * 1060000
+   
+      Tarda 25.23s
+   
+      ![](images/part1/21.PNG)
+   
     * 1070000
+   
+      Tarda 25.71s
+   
+      ![](images/part1/22.PNG)
+   
     * 1080000
+   
+      Tarda 25.75s
+   
+      ![](images/part1/23.PNG)
+   
     * 1090000    
+   
+      Tarda 26.19s
+   
+      ![](images/part1/24.PNG)
+   
 
 8. Dírijase ahora a Azure y verifique el consumo de CPU para la VM. (Los resultados pueden tardar 5 minutos en aparecer).
 
 ![Imágen 2](images/part1/part1-vm-cpu.png)
+   
+   * Podemos observar que los consumos de CPU son supremamente altos y que cada pico es el fin del procesamieto de una de las secuencias de fibonacci
+   
+     ![](images/part1/25.PNG)
+   
+     ![](images/part1/26.PNG)
 
 9. Ahora usaremos Postman para simular una carga concurrente a nuestro sistema. Siga estos pasos.
     * Instale newman con el comando `npm install newman -g`. Para conocer más de Newman consulte el siguiente [enlace](https://learning.getpostman.com/docs/postman/collection-runs/command-line-integration-with-newman/).
+   
+   ![](images/part1/27.PNG)
+   
     * Diríjase hasta la ruta `FibonacciApp/postman` en una maquina diferente a la VM.
+   
+   ![](images/part1/28.PNG)
+   
     * Para el archivo `[ARSW_LOAD-BALANCING_AZURE].postman_environment.json` cambie el valor del parámetro `VM1` para que coincida con la IP de su VM.
+   
+   ![](images/part1/29.PNG)
+   
     * Ejecute el siguiente comando.
 
     ```
     newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10 &
     newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALANCING_AZURE].postman_environment.json -n 10
     ```
-
+   
 10. La cantidad de CPU consumida es bastante grande y un conjunto considerable de peticiones concurrentes pueden hacer fallar nuestro servicio. Para solucionarlo usaremos una estrategia de Escalamiento Vertical. En Azure diríjase a la sección *size* y a continuación seleccione el tamaño `B2ms`.
 
 ![Imágen 3](images/part1/part1-vm-resize.png)
