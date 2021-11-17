@@ -173,11 +173,9 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
    
     * Diríjase hasta la ruta `FibonacciApp/postman` en una maquina diferente a la VM.
    
-   ![](images/part1/28.PNG)
-   
     * Para el archivo `[ARSW_LOAD-BALANCING_AZURE].postman_environment.json` cambie el valor del parámetro `VM1` para que coincida con la IP de su VM.
    
-   ![](images/part1/29.PNG)
+   ![](images/part1/28.PNG)
    
     * Ejecute el siguiente comando.
 
@@ -189,26 +187,153 @@ Cuando un conjunto de usuarios consulta un enésimo número (superior a 1000000)
 10. La cantidad de CPU consumida es bastante grande y un conjunto considerable de peticiones concurrentes pueden hacer fallar nuestro servicio. Para solucionarlo usaremos una estrategia de Escalamiento Vertical. En Azure diríjase a la sección *size* y a continuación seleccione el tamaño `B2ms`.
 
 ![Imágen 3](images/part1/part1-vm-resize.png)
-
+   
+   ![](images/part1/29.PNG)
+   
 11. Una vez el cambio se vea reflejado, repita el paso 7, 8 y 9.
+   
+   * 1000000
+      
+      Tarda 20.32s
+   
+      ![](images/part1/30.PNG)
+   
+    * 1010000
+   
+      Tarda 20.43s
+   
+      ![](images/part1/31.PNG)
+   
+    * 1020000
+  
+      Tarda 20.06s
+   
+      ![](images/part1/32.PNG)
+      
+    * 1030000
+   
+      Tarda 21.39s
+   
+      ![](images/part1/33.PNG)
+   
+    * 1040000
+   
+      Tarda 20.96s
+   
+      ![](images/part1/34.PNG)
+   
+    * 1050000
+   
+      Tarda 21.58s
+   
+      ![](images/part1/35.PNG)
+   
+    * 1060000
+   
+      Tarda 21.86s
+   
+      ![](images/part1/36.PNG)
+   
+    * 1070000
+   
+      Tarda 22.38s
+   
+      ![](images/part1/37.PNG)
+   
+    * 1080000
+   
+      Tarda 23.84s
+   
+      ![](images/part1/38.PNG)
+   
+    * 1090000    
+   
+      Tarda 24.09s
+   
+      ![](images/part1/39.PNG)
+   
+   Consumo de recursos 
+   
+   ![](images/part1/40.PNG)
+   
+   ![](images/part1/41.PNG)
+   
 12. Evalue el escenario de calidad asociado al requerimiento no funcional de escalabilidad y concluya si usando este modelo de escalabilidad logramos cumplirlo.
 13. Vuelva a dejar la VM en el tamaño inicial para evitar cobros adicionales.
 
 **Preguntas**
 
 1. ¿Cuántos y cuáles recursos crea Azure junto con la VM?
+   
+   ![](images/part1/recursos.PNG)
+   
+   Disco virtual
+   Clave SSH
+   Interfaz de red
+   Grupo de seguridad de red
+   Direccipon IP publica
+   Red virtual
+   Network watcher
+   
+   
 2. ¿Brevemente describa para qué sirve cada recurso?
-3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? ¿Por qué debemos crear un *Inbound port rule* antes de acceder al servicio?
+   
+   Disco virtual: Se ultiliza para el almacenamiento de datos
+   Clave SSH: Es la clave de conexión para el acceso remoto al servicio
+   Interfaz de red: Sirve para señalar la conexión que se da de manera física, entre los dispositivos y el sistema
+   Grupo de seguridad de red: Se utiliza para filtrar el tráfico de la red
+   Dirección IP pública: Permite acceder a la vm y a conexiones
+   Red virtual: Es la red vlan que se crea para darle conexión a la maquina virtual
+   Network watcher: Es un observador el cual administra el trafico externo de la red
+   
+   
+3. ¿Al cerrar la conexión ssh con la VM, por qué se cae la aplicación que ejecutamos con el comando `npm FibonacciApp.js`? 
+   
+      Si se utiliza el comando npm FibonacciApp.js y la máquina se suspende por inactividad, la aplicación dejaría de correr, al igual que si existe un error en la máquina virtual. Por eso se utiliza forever start FibonacciApp.js.
+   
+   * ¿Por qué debemos crear un Inbound port rule antes de acceder al servicio?
+
+      El Inbound port rule sirve para permitir la entrada al servicio que se está levantando. En este caso la aplicación corre por el puerto 3000, así que es este el que se debe abrir.
+   
 4. Adjunte tabla de tiempos e interprete por qué la función tarda tando tiempo.
+   
+   A continuación se muestra la gráfica obtenida luego de realizar las operaciones correspondientes de Fibonacci con 1000000, 1010000, 1020000, 1030000, 1040000, 1050000, 1060000, 1070000, 1080000 y 1090000. La función tarda mucho tiempo, y esto se puede deber a la capacidad de procesamiento de la máquina virtual
+   
+    ![](images/part1/grafico.PNG)
+   
 5. Adjunte imágen del consumo de CPU de la VM e interprete por qué la función consume esa cantidad de CPU.
+   
+   ![](images/part1/40.PNG)   
+   
 6. Adjunte la imagen del resumen de la ejecución de Postman. Interprete:
     * Tiempos de ejecución de cada petición.
     * Si hubo fallos documentelos y explique.
+   
+   En las siguientes tres imágenes, se muestra el resultado obtenido luego de realizar la respectiva ejecución de Postman. Como se muestra en las imágenes, el tiempo de ejecución está por debajo de 4 minuto con 55.7 segundos, y muestra errores principalmente porque no había conexión con la máquina virtual, error que posteriormente fue solucionado. Antes de escalar fallan algunas peticiones por el alto consumo que presenta la CPU, después de escalar se presentan algunos fallos aparentemente por la alta concurrencia, pero como se pueden ver en las siguientes imágenes, se puede ver una mejora considerable en el tiempo de respuesta.
+
+   ![](images/part1/postman.PNG)  
+   
 7. ¿Cuál es la diferencia entre los tamaños `B2ms` y `B1ls` (no solo busque especificaciones de infraestructura)?
+   
+   * B2ms: Tiene 2 vCPUs, 8 GB de RAM, 1 data disk y cuesta $ 60.74 dólares mensuales.
+   * B1ls: Tiene 1 vCPUs, 0.5 GB de RAM, 1 data disk y cuesta $ 3.80 dólares mensuales.
+   
 8. ¿Aumentar el tamaño de la VM es una buena solución en este escenario?, ¿Qué pasa con la FibonacciApp cuando cambiamos el tamaño de la VM?
+   
+   Si bien aumentar la capacidad de procesamiento a la máquina ayuda a bajar el tiempo de ejecución de la aplicación, no es la mejor manera de agilizar el cálculo del número, ya que se podría optimizar el código para tener un menor tiempo de ejecución.
+   
 9. ¿Qué pasa con la infraestructura cuando cambia el tamaño de la VM? ¿Qué efectos negativos implica?
+   
+   En el caso de un servicio como éste, podría llevar a sobrecostos en el caso de que se escoja una máquina con exceso de capacidad, o un crecimiento ilimitado.
+   
 10. ¿Hubo mejora en el consumo de CPU o en los tiempos de respuesta? Si/No ¿Por qué?
+   
+   Si bien se ve una leve mejora en el tiempo en los primeros, hay una variación atípica en los últimos datos haciendo que no se pueda concluir si el aumento del tamaño de la maquina permitió un mejor funcionamiento.
+
+
 11. Aumente la cantidad de ejecuciones paralelas del comando de postman a `4`. ¿El comportamiento del sistema es porcentualmente mejor?
+   
+   El comportamiento si es porcentualmente mejor ya que presenta menos fallos.
 
 ### Parte 2 - Escalabilidad horizontal
 
