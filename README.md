@@ -538,14 +538,29 @@ newman run ARSW_LOAD-BALANCING_AZURE.postman_collection.json -e [ARSW_LOAD-BALAN
    
    Luego de realizar los pasos correspondientes para realizar las respectivas pruebas en Escalabilidad Vertical y Horizontal, se presenta primero la Escalabilidad Horizontal, en la que se evidencia que cada solicitud se demoró en promedio 27 segundos, donde ninguna solicitud falló.
    
-   ![](images/part2/new1.PNG)
+   ![](images/part2/new1.png)
    
    Ahora, se presentan las pruebas luego de realizar Escalabilidad Vertical. Como se ve a continuación, cada solicitud se demoró en promedio 27 segundos también, donde 4 solicitudes fallaron.
    
-   ![](images/part2/new2.PNG)
+   ![](images/part2/new2.ong)
    
 * Presente el Diagrama de Despliegue de la solución.
 
+   Podemos observar que el cosumo de recursos y el tiempo de consumo es inferior a cuando el ejercicio se realizo en la primera parte del laboratorio
+   
+   ![](images/part2/vm1.PNG)
+   
+   ![](images/part2/vm2.PNG)
+   
+   ![](images/part2/vm3.PNG)
+   
 
+### Autores
+* [Ana Maria Salazar Bohorquez](https://github.com/anamariasalazar)
+* [Richard Santiago Urrea Garcia](https://github.com/RichardUG)
 
+### Licencia & Derechos de Autor
+**©️** Ana Maria Salazar Bohorquez && Richard Santiago Urrea Garcia, Estudiantes de Ingeniería de Sistemas de la Escuela Colombiana de Ingeniería Julio Garavito
 
+Licencia bajo la [GNU General Public License](/LICENSE.txt)
+    
